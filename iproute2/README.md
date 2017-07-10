@@ -1,1 +1,1 @@
-![alt text](https://raw.githubusercontent.com/shuu01/OpenWrt-examples/master/iproute2/img.png)
+![](https://github.com/shuu01/OpenWrt-examples/blob/master/iproute2/gp.png)
