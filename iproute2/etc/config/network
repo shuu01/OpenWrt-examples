@@ -1,0 +1,101 @@
+config interface 'loopback'
+	option ifname 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
+
+config globals 'globals'
+#	option ula_prefix 'fd90:21a0:d600::/48'
+
+config interface 'lan1'
+	option ifname 'eth0.2'
+	option force_link '1'
+	option type 'bridge'
+	option proto 'static'
+	option ipaddr '192.168.0.1'
+	option netmask '255.255.255.0'
+	option ip4table 'rt1'
+
+config interface 'lan2'
+	option ifname 'eth0.3'
+	option force_link '1'
+	option type 'bridge'
+	option proto 'static'
+	option ipaddr '192.168.1.1'
+	option netmask '255.255.255.0'
+	option ip4table 'rt2'
+
+config rule
+	option src '192.168.0.0/24'
+	option dest '192.168.1.0/24'
+	option lookup 'rt2'
+	option priority '10'
+
+config rule
+	option src '192.168.1.0/24'
+	option dest '192.168.0.0/24'
+	option lookup 'rt1'
+	option priority '10'
+
+config rule
+	option src '192.168.0.0/24'
+	option lookup 'rt1'
+	option priority '100'
+
+config rule
+	option src '192.168.1.0/24'
+	option lookup 'rt2'
+	option priority '100'
+
+config rule
+	option dest '192.168.0.0/24'
+	option lookup 'rt1'
+	option priority '11000'
+
+config rule
+	option dest '192.168.1.0/24'
+	option lookup 'rt2'
+	option priority '11000'
+
+# wan1
+config interface 'wan1'
+	option ifname 'eth1'
+	option proto 'pppoe'
+	option username 'xxxxxx'
+	option password 'yyyyyy'
+	option defaultroute '1'
+	option ipv6 '0'
+	option ip4table 'rt1'
+
+# wan2
+config interface 'wan2'
+	option ifname 'eth0.10'
+	option proto 'pppoe'
+	option username 'xxxxxx'
+	option password 'yyyyyy'
+	option defaultroute '1'
+	option ipv6 '0'
+	option ip4table 'rt2'
+
+config switch
+	option name 'switch0'
+	option reset '1'
+	option enable_vlan '1'
+
+# lan1 phys
+config switch_vlan
+	option device 'switch0'
+	option vlan '2'
+	option ports '0t 3 4'
+
+# lan2 phys
+config switch_vlan
+	option device 'switch0'
+	option vlan '3'
+	option ports '0t 1'
+
+# wan1 phys
+config switch_vlan
+	option device 'switch0'
+	option vlan '10'
+	option ports '0t 2'
