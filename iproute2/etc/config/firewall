@@ -1,0 +1,209 @@
+config defaults
+	option syn_flood	1
+	option input		ACCEPT
+	option output		ACCEPT
+	option forward		REJECT
+# Uncomment this line to disable ipv6 rules
+#	option disable_ipv6	1
+
+config zone
+	option name		lan1
+	list   network		'lan1'
+	option input		ACCEPT
+	option output		ACCEPT
+	option forward		ACCEPT
+
+config zone                           
+  option name             lan2  
+  list   network          'lan2'
+  option input            ACCEPT
+  option output           ACCEPT
+  option forward          ACCEPT
+
+config zone
+	option name		wan1
+	list   network		'wan1'
+	option input		REJECT
+	option output		ACCEPT
+	option forward		REJECT
+	option masq		1
+	option mtu_fix		1
+
+config zone
+  option name             wan2  
+  list   network          'wan2'
+  option input            REJECT
+  option output           ACCEPT
+  option forward          REJECT
+  option masq             1     
+  option mtu_fix          1
+
+config forwarding
+	option src		lan1
+	option dest		wan1
+
+config forwarding
+	option src		lan2
+	option dest		wan2
+
+config forwarding
+	option src		lan2
+	option dest		lan1
+
+config forwarding
+	option src		lan1
+	option dest		lan2
+
+
+# We need to accept udp packets on port 68,
+# see https://dev.openwrt.org/ticket/4108
+
+# wan1
+config rule
+	option name		Allow-DHCP-Renew
+	option src		wan1
+	option proto		udp
+	option dest_port	68
+	option target		ACCEPT
+	option family		ipv4
+
+# Allow IPv4 ping
+config rule
+	option name		Allow-Ping
+	option src		wan1
+	option proto		icmp
+	option icmp_type	echo-request
+	option family		ipv4
+	option target		ACCEPT
+
+config rule
+	option name		Allow-IGMP
+	option src		wan1
+	option proto		igmp
+	option family		ipv4
+	option target		ACCEPT
+
+# wan2
+config rule                                
+  option name   Allow-DHCP-Renew
+  option src    wan2            
+  option proto    udp             
+  option dest_port  68              
+  option target   ACCEPT          
+  option family   ipv4            
+
+# Allow IPv4 ping
+config rule
+  option name             Allow-Ping      
+  option src              wan2            
+  option proto            icmp            
+  option icmp_type        echo-request    
+  option family           ipv4            
+  option target           ACCEPT
+
+config rule                                     
+  option name             Allow-IGMP      
+  option src              wan2            
+  option proto            igmp            
+  option family           ipv4            
+  option target           ACCEPT
+
+# Allow DHCPv6 replies
+# see https://dev.openwrt.org/ticket/10381
+config rule
+	option name		Allow-DHCPv6
+	option src		wan1
+	option proto		udp
+	option src_ip		fe80::/10
+	option src_port		547
+	option dest_ip		fe80::/10
+	option dest_port	546
+	option family		ipv6
+	option target		ACCEPT
+
+config rule
+	option name		Allow-MLD
+	option src		wan1
+	option proto		icmp
+	option src_ip		fe80::/10
+	list icmp_type		'130/0'
+	list icmp_type		'131/0'
+	list icmp_type		'132/0'
+	list icmp_type		'143/0'
+	option family		ipv6
+	option target		ACCEPT
+
+# Allow essential incoming IPv6 ICMP traffic
+config rule
+	option name		Allow-ICMPv6-Input
+	option src		wan1
+	option proto	icmp
+	list icmp_type		echo-request
+	list icmp_type		echo-reply
+	list icmp_type		destination-unreachable
+	list icmp_type		packet-too-big
+	list icmp_type		time-exceeded
+	list icmp_type		bad-header
+	list icmp_type		unknown-header-type
+	list icmp_type		router-solicitation
+	list icmp_type		neighbour-solicitation
+	list icmp_type		router-advertisement
+	list icmp_type		neighbour-advertisement
+	option limit		1000/sec
+	option family		ipv6
+	option target		ACCEPT
+
+# Allow essential forwarded IPv6 ICMP traffic
+config rule
+	option name		Allow-ICMPv6-Forward
+	option src		wan1
+	option dest		*
+	option proto		icmp
+	list icmp_type		echo-request
+	list icmp_type		echo-reply
+	list icmp_type		destination-unreachable
+	list icmp_type		packet-too-big
+	list icmp_type		time-exceeded
+	list icmp_type		bad-header
+	list icmp_type		unknown-header-type
+	option limit		1000/sec
+	option family		ipv6
+	option target		ACCEPT
+
+# include a file with users custom iptables rules
+config include
+	option path /etc/firewall.user
+
+config redirect
+	option name 'SSH-wan'
+	option target 'DNAT'
+	option src wan1
+	option src_dport xxxx
+	option dest lan1
+	option dest_port 22
+	option dest_ip 192.168.0.1
+	option proto tcp
+
+config rule
+	option target ACCEPT
+	option src wan1
+	option proto tcp
+	option name vnc
+	option dest_port 5900
+
+config redirect                                        
+  option name 'SSH-wan'
+  option target 'DNAT'
+  option src wan2
+  option src_dport xxxx
+  option dest lan2
+  option dest_port 22                            
+  option dest_ip 192.168.1.1                     
+  option proto tcp                               
+                                                       
+config rule                                            
+  option target ACCEPT
+  option src wan2
+  option proto tcp
+  option name vnc
+  option dest_port 5900
