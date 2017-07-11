@@ -84,13 +84,13 @@ config rule
 	option target		ACCEPT
 
 # wan2
-config rule                                
-  option name   Allow-DHCP-Renew
-  option src    wan2            
-  option proto    udp             
-  option dest_port  68              
-  option target   ACCEPT          
-  option family   ipv4            
+config rule
+	option name   Allow-DHCP-Renew
+	option src    wan2
+	option proto    udp
+	option dest_port  68
+	option target   ACCEPT
+	option family   ipv4
 
 # Allow IPv4 ping
 config rule
@@ -176,12 +176,10 @@ config include
 
 config redirect
 	option name 'SSH-wan'
-	option target 'DNAT'
 	option src wan1
 	option src_dport xxxx
 	option dest lan1
 	option dest_port 22
-	option dest_ip 192.168.0.1
 	option proto tcp
 
 config rule
@@ -192,18 +190,16 @@ config rule
 	option dest_port 5900
 
 config redirect                                        
-  option name 'SSH-wan'
-  option target 'DNAT'
-  option src wan2
-  option src_dport xxxx
-  option dest lan2
-  option dest_port 22                            
-  option dest_ip 192.168.1.1                     
-  option proto tcp                               
-                                                       
+	option name 'SSH-wan'
+	option src wan2
+	option src_dport xxxx
+	option dest lan2
+	option dest_port 22                    
+	option proto tcp
+
 config rule                                            
-  option target ACCEPT
-  option src wan2
-  option proto tcp
-  option name vnc
-  option dest_port 5900
+	option target ACCEPT
+	option src wan2
+	option proto tcp
+	option name vnc
+	option dest_port 5900
