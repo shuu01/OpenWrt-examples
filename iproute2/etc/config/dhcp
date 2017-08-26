@@ -36,3 +36,7 @@ config dhcp lan2
 config dhcp wan1
 	option interface	wan1
 	option ignore	1
+
+config dhcp wan2
+	option interface	wan2
+	option ignore	1
