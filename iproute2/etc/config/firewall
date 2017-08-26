@@ -14,11 +14,11 @@ config zone
 	option forward		ACCEPT
 
 config zone                           
-  option name             lan2  
-  list   network          'lan2'
-  option input            ACCEPT
-  option output           ACCEPT
-  option forward          ACCEPT
+	option name             lan2  
+	list   network          'lan2'
+	option input            ACCEPT
+	option output           ACCEPT
+	option forward          ACCEPT
 
 config zone
 	option name		wan1
@@ -30,14 +30,14 @@ config zone
 	option mtu_fix		1
 
 config zone
-  option name             wan2  
-  list   network          'wan2'
-  option input            REJECT
-  option output           ACCEPT
-  option forward          REJECT
-  option masq             1     
-  option mtu_fix          1
-
+	option name             wan2
+	list   network          'wan2'
+	option input            REJECT
+	option output           ACCEPT
+	option forward          REJECT
+	option masq             1
+	option mtu_fix          1
+	
 config forwarding
 	option src		lan1
 	option dest		wan1
@@ -94,19 +94,19 @@ config rule
 
 # Allow IPv4 ping
 config rule
-  option name             Allow-Ping      
-  option src              wan2            
-  option proto            icmp            
-  option icmp_type        echo-request    
-  option family           ipv4            
-  option target           ACCEPT
+	option name             Allow-Ping      
+	option src              wan2            
+	option proto            icmp            
+	option icmp_type        echo-request    
+	option family           ipv4            
+	option target           ACCEPT
 
 config rule                                     
-  option name             Allow-IGMP      
-  option src              wan2            
-  option proto            igmp            
-  option family           ipv4            
-  option target           ACCEPT
+	option name             Allow-IGMP      
+	option src              wan2            
+	option proto            igmp            
+	option family           ipv4            
+	option target           ACCEPT
 
 # Allow DHCPv6 replies
 # see https://dev.openwrt.org/ticket/10381
